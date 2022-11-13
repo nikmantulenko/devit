@@ -1,15 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-export default function LogIn(props) {
+export default function Register(props: NativeStackScreenProps<any>) {
     return (
         <>
             <StatusBar style="auto" />
 
             <View style={styles.container}>
-                <Text>LOGIN SCREEN</Text>
+                <Text>REGISTER SCREEN</Text>
                 <Button title={'mock authorization'} onPress={() => props.navigation.navigate('profile')} />
-                <Button title={'to register'} onPress={() => props.navigation.navigate('register')} />
+                <Button title={'to login'} onPress={() => props.navigation.navigate('log-in')} />
             </View>
         </>
     );

@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-export default function Profile(props) {
+export default function Profile(props: NativeStackScreenProps<any>) {
     return (
         <>
             <StatusBar style="auto" />
