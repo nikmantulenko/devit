@@ -3,14 +3,24 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import apiLogIn from '../api/logIn'
+
 export default function LogIn(props: NativeStackScreenProps<any>) {
+    const handleLogIn = () => {
+        const creds = {
+            username: 'testname',
+            password: '1234',
+        }
+        apiLogIn(creds).then(userData => props.navigation.navigate('profile', userData))
+    }
+
     return (
         <>
             <StatusBar style="auto" />
 
             <View style={styles.container}>
                 <Text>LOGIN SCREEN</Text>
-                <Button title={'mock authorization'} onPress={() => props.navigation.navigate('profile')} />
+                <Button color={'tomato'} title={'log in'} onPress={handleLogIn} />
                 <Button title={'to register'} onPress={() => props.navigation.navigate('register')} />
             </View>
         </>

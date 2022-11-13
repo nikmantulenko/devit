@@ -9,6 +9,7 @@ export default function Profile(props: NativeStackScreenProps<any>) {
 
             <View style={styles.container}>
                 <Text>PROFILE</Text>
+                <Text>{JSON.stringify(props.route.params)}</Text>
                 <Button title={'mock logout'} onPress={() => props.navigation.navigate('log-in')} />
             </View>
         </>
