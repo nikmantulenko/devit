@@ -60,7 +60,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
         dispatch(actions.loaderOn('REGISTRATION'))
         try {
             const userData = await apiRegister(registerData)
-            props.navigation.navigate('profile', userData)
+            dispatch(actions.authorize(userData))
             setStatus('CONFIRMED')
         } catch (error: any) {
             dispatch(actions.addError('REGISTRATION', error.message))

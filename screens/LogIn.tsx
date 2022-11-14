@@ -17,7 +17,7 @@ export default function LogIn(props: NativeStackScreenProps<any>) {
         dispatch(actions.loaderOn('LOG_IN'))
         try {
             const userData = await apiLogIn({ username: 'testname', password: '1234' })
-            props.navigation.navigate('profile', userData)
+            dispatch(actions.authorize(userData))
         } catch (error: any) {
             dispatch(actions.addError('LOG_IN', error.message))
         } finally {
