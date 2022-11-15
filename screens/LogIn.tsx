@@ -63,7 +63,6 @@ export default function LogIn(props: NativeStackScreenProps<any>) {
                                     <PasswordInput
                                         {...fieldProps}
                                         placeholder={'password'}
-                                        initialSecure={true}
                                     />
                                 )}
                             />

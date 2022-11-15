@@ -7,7 +7,7 @@ import PasswordSecurePNG from '../assets/icon.png';
 import FieldInput from './FieldInput'
 
 type PasswordInputProps = Parameters<typeof FieldInput>[0] & {
-    initialSecure: boolean
+    initialSecure?: boolean
 }
 
 PasswordInput.defaultProps = {
