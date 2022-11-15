@@ -2,12 +2,22 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
+import { Form, Field } from 'react-final-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import apiRegister from '../api/register'
 import apiPhoneCheck from '../api/phoneCheck'
 import apiRequestPhoneCheck from '../api/requestPhoneCheck'
+import { FieldInput, PasswordInput } from '../components';
 import { actions, selectors } from '../store';
+
+type FormValues = {
+    name: string,
+    email: string,
+    password: string,
+    passwordConfirmation: string,
+    phone: string,
+}
 
 export default function Register(props: NativeStackScreenProps<any>) {
     const isRequestingCheck = useSelector(selectors.isLoadingSelector('REQUEST_PHONE_CHECK'))
@@ -22,18 +32,13 @@ export default function Register(props: NativeStackScreenProps<any>) {
 
     const error = requestCheckError || checkError || registrationError
     const loading = isRequestingCheck || isChecking || isSigningIn
-    const registerData = {
-        name: 'testname',
-        email: 'test@gmail.com',
-        password: '1234',
-        phone: '+3801111111111',
-    }
+    const dummyPhone = '+3801111111111'
 
     const handleRequestPhoneCheck = async () => {
         !!requestCheckError && dispatch(actions.removeError('REQUEST_PHONE_CHECK'))
         dispatch(actions.loaderOn('REQUEST_PHONE_CHECK'))
         try {
-            await apiRequestPhoneCheck(registerData.phone)
+            await apiRequestPhoneCheck(dummyPhone)
             setStatus('REQUESTED')
         } catch (error: any) {
             dispatch(actions.addError('REQUEST_PHONE_CHECK', error.message))
@@ -46,7 +51,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
         !!checkError && dispatch(actions.removeError('PHONE_CHECK'))
         dispatch(actions.loaderOn('PHONE_CHECK'))
         try {
-            await apiPhoneCheck(registerData.phone, '1111')
+            await apiPhoneCheck(dummyPhone, '1111')
             setStatus('CONFIRMED')
         } catch (error: any) {
             dispatch(actions.addError('PHONE_CHECK', error.message))
@@ -55,11 +60,11 @@ export default function Register(props: NativeStackScreenProps<any>) {
         }
     }
 
-    const handleRegister = async () => {
+    const handleRegister = async (values: FormValues) => {
         !!registrationError && dispatch(actions.removeError('REGISTRATION'))
         dispatch(actions.loaderOn('REGISTRATION'))
         try {
-            const userData = await apiRegister(registerData)
+            const userData = await apiRegister(values)
             dispatch(actions.authorize(userData))
             setStatus('CONFIRMED')
         } catch (error: any) {
@@ -75,27 +80,99 @@ export default function Register(props: NativeStackScreenProps<any>) {
 
             <View style={styles.container}>
                 <Text>REGISTER SCREEN</Text>
-                {!!error && <Text style={styles.errorMessage}>{error}</Text>}
-                {loading && <ActivityIndicator color={'darkblue'} />}
-                <Button
-                    color={'tomato'}
-                    title={'request check'}
-                    onPress={handleRequestPhoneCheck}
-                    disabled={status !== 'INITIAL'}
+
+                <Form<FormValues>
+                    initialValues={{
+                        name: '',
+                        email: '',
+                        password: '',
+                        passwordConfirmation: '',
+                        phone: dummyPhone,
+                    }}
+                    onSubmit={handleRegister}
+                    render={formProps => (
+                        <View>
+                            {!!error && <Text style={styles.errorMessage}>{error}</Text>}
+                            {loading && <ActivityIndicator color={'darkblue'} />}
+                            <Field
+                                name={'phone'}
+                                validate={value => value.length <= 5}
+                                render={fieldProps => (
+                                    <FieldInput
+                                        {...fieldProps}
+                                        editable={false}
+                                        textContentType={'telephoneNumber'}
+                                        placeholder={'380 00 000 000 00'}
+                                    />
+                                )}
+                            />
+                            <Button
+                                color={'tomato'}
+                                title={'request check'}
+                                onPress={handleRequestPhoneCheck}
+                                disabled={status !== 'INITIAL'}
+                            />
+                            <Button
+                                color={'tomato'}
+                                title={'verify'}
+                                onPress={handlePhoneCheck}
+                                disabled={status !== 'REQUESTED'}
+                            />
+                            <Field
+                                name={'name'}
+                                validate={value => value.length <= 5}
+                                render={fieldProps => (
+                                    <FieldInput
+                                        {...fieldProps}
+                                        textContentType={'username'}
+                                        placeholder={'name'}
+                                    />
+                                )}
+                            />
+                            <Field
+                                name={'email'}
+                                validate={value => value.length <= 5}
+                                render={fieldProps => (
+                                    <FieldInput
+                                        {...fieldProps}
+                                        textContentType={'emailAddress'}
+                                        placeholder={'email'}
+                                    />
+                                )}
+                            />
+                            <Field
+                                name={'password'}
+                                validate={value => value.length <= 5}
+                                render={fieldProps => (
+                                    <PasswordInput
+                                        {...fieldProps}
+                                        placeholder={'password'}
+                                    />
+                                )}
+                            />
+                            <Field
+                                name={'passwordConfirmation'}
+                                validate={value => value.length <= 5}
+                                render={fieldProps => (
+                                    <PasswordInput
+                                        {...fieldProps}
+                                        placeholder={'password'}
+                                    />
+                                )}
+                            />
+                            <Button
+                                color={'tomato'}
+                                title={'register'}
+                                onPress={formProps.handleSubmit}
+                                disabled={
+                                    status !== 'CONFIRMED' ||
+                                    formProps.submitFailed && formProps.invalid
+                                }
+                            />
+                            <Button title={'to login'} onPress={() => props.navigation.navigate('log-in')} />
+                        </View>
+                    )}
                 />
-                <Button
-                    color={'tomato'}
-                    title={'verify'}
-                    onPress={handlePhoneCheck}
-                    disabled={status !== 'REQUESTED'}
-                />
-                <Button
-                    color={'tomato'}
-                    title={'register'}
-                    onPress={handleRegister}
-                    disabled={status !== 'CONFIRMED'}
-                />
-                <Button title={'to login'} onPress={() => props.navigation.navigate('log-in')} />
             </View>
         </>
     );
