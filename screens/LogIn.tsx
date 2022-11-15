@@ -6,6 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { FieldInput, PasswordInput } from '../components';
 import { actions, selectors } from '../store';
+import validationRules from '../validationRules';
 import apiLogIn from '../api/logIn'
 
 type FormValues = {
@@ -47,7 +48,7 @@ export default function LogIn(props: NativeStackScreenProps<any>) {
                             {loading && <ActivityIndicator color={'darkblue'} />}
                             <Field
                                 name={'username'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.username}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
@@ -58,7 +59,7 @@ export default function LogIn(props: NativeStackScreenProps<any>) {
                             />
                             <Field
                                 name={'password'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.password}
                                 render={fieldProps => (
                                     <PasswordInput
                                         {...fieldProps}

@@ -5,6 +5,7 @@ import { Form, Field } from 'react-final-form';
 
 import editProfile from '../api/editProfile'
 import { FieldInput } from '../components';
+import validationRules from '../validationRules';
 import { actions, selectors } from '../store';
 
 type FormValues = {
@@ -64,7 +65,7 @@ export default function Profile() {
                             {isUpdating && <ActivityIndicator color={'darkblue'} />}
                             <Field
                                 name={'name'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.username}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
@@ -75,7 +76,7 @@ export default function Profile() {
                             />
                             <Field
                                 name={'email'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.email}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
@@ -86,7 +87,7 @@ export default function Profile() {
                             />
                             <Field
                                 name={'phone'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.phone}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
@@ -98,7 +99,7 @@ export default function Profile() {
                             />
                             <Field
                                 name={'position'}
-                                validate={value => value !== '' && value.length <= 5}
+                                validate={validationRules.position}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
@@ -108,7 +109,7 @@ export default function Profile() {
                             />
                             <Field
                                 name={'skype'}
-                                validate={value => value !== '' && value.length <= 5}
+                                validate={validationRules.skype}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}

@@ -9,6 +9,7 @@ import apiRegister from '../api/register'
 import apiPhoneCheck from '../api/phoneCheck'
 import apiRequestPhoneCheck from '../api/requestPhoneCheck'
 import { FieldInput, PasswordInput } from '../components';
+import validationRules from '../validationRules';
 import { actions, selectors } from '../store';
 
 type FormValues = {
@@ -96,7 +97,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
                             {loading && <ActivityIndicator color={'darkblue'} />}
                             <Field
                                 name={'phone'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.phone}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
@@ -120,7 +121,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
                             />
                             <Field
                                 name={'name'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.username}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
@@ -131,7 +132,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
                             />
                             <Field
                                 name={'email'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.email}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
@@ -142,7 +143,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
                             />
                             <Field
                                 name={'password'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.password}
                                 render={fieldProps => (
                                     <PasswordInput
                                         {...fieldProps}
@@ -152,7 +153,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
                             />
                             <Field
                                 name={'passwordConfirmation'}
-                                validate={value => value.length <= 5}
+                                validate={validationRules.passwordConfirmation}
                                 render={fieldProps => (
                                     <PasswordInput
                                         {...fieldProps}
