@@ -1,12 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Field } from 'react-final-form';
 
 import editProfile from '../api/editProfile'
-import { FieldInput } from '../components';
+import { FieldInput, Button } from '../components';
 import validationRules from '../validationRules';
 import { actions, selectors } from '../store';
+import globalStyles from '../globalStyles';
+// @ts-ignore
+import NoAvatar from '../assets/no-avatar.png';
 
 type FormValues = {
     name: string,
@@ -44,12 +47,10 @@ export default function Profile() {
     }
 
     return (
-        <>
+        <View style={styles.container}>
             <StatusBar style="auto" />
 
-            <View style={styles.container}>
-                <Text>PROFILE</Text>
-
+            <ScrollView contentContainerStyle={globalStyles.flexGrow1}>
                 <Form<FormValues>
                     initialValues={{
                         name: userData.name,
@@ -60,15 +61,27 @@ export default function Profile() {
                     }}
                     onSubmit={handleChangeProfile}
                     render={formProps => (
-                        <View>
+                        <View style={styles.formWrapper}>
+                            <View style={[styles.logOutContainer, globalStyles.mt5, globalStyles.mb4]}>
+                                <Text style={styles.logOut} />
+                                <Text style={[globalStyles.title, styles.logOut, styles.fs18]}>Edit Profile</Text>
+                                <Text style={[globalStyles.accentText, globalStyles.textRight, styles.logOut, styles.fs16]} onPress={handleLogOut}>Log Out</Text>
+                            </View>
+
+                            <View style={globalStyles.mb4}>
+                                <Image source={NoAvatar} style={styles.avatar} />
+                                <Text style={globalStyles.title}>{userData.name}</Text>
+                                {!!userData.position && <Text style={[globalStyles.text, globalStyles.textCenter]}>{userData.position}</Text>}
+                            </View>
+
                             {!!error && <Text style={styles.errorMessage}>{error}</Text>}
-                            {isUpdating && <ActivityIndicator color={'darkblue'} />}
                             <Field
                                 name={'name'}
                                 validate={validationRules.username}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
+                                        containerStyle={globalStyles.mb4}
                                         textContentType={'username'}
                                         placeholder={'name'}
                                     />
@@ -80,6 +93,7 @@ export default function Profile() {
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
+                                        containerStyle={globalStyles.mb4}
                                         textContentType={'emailAddress'}
                                         placeholder={'email'}
                                     />
@@ -91,6 +105,7 @@ export default function Profile() {
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
+                                        containerStyle={globalStyles.mb4}
                                         editable={false}
                                         textContentType={'telephoneNumber'}
                                         placeholder={'380 00 000 000 00'}
@@ -103,6 +118,7 @@ export default function Profile() {
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
+                                        containerStyle={globalStyles.mb4}
                                         placeholder={'position'}
                                     />
                                 )}
@@ -117,13 +133,17 @@ export default function Profile() {
                                     />
                                 )}
                             />
-                            <Button color={'tomato'} title={'edit profile'} onPress={formProps.handleSubmit} />
-                            <Button title={'logout'} onPress={handleLogOut} />
+                            <Button
+                                title={'Save'}
+                                style={[globalStyles.mt4, globalStyles.mb4]}
+                                onPress={formProps.handleSubmit}
+                                loading={isUpdating}
+                            />
                         </View>
                     )}
                 />
-            </View>
-        </>
+            </ScrollView>
+        </View>
     );
 }
 
@@ -131,8 +151,27 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+    },
+    formWrapper: {
+        paddingHorizontal: 32,
+    },
+    logOutContainer: {
+        flexDirection: 'row',
+    },
+    logOut: {
+        flexBasis: '33%',
+    },
+    avatar: {
+        width: 70,
+        height: 70,
+        borderRadius: 999,
+        alignSelf: 'center',
+    },
+    fs16: {
+        fontSize: 16,
+    },
+    fs18: {
+        fontSize: 18,
     },
     errorMessage: {
         color: 'darkred',

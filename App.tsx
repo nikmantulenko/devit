@@ -1,8 +1,10 @@
 import { Provider as StoreProvider } from 'react-redux'
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useFonts } from 'expo-font';
 
 import Navigation from './Navigation';
 import store from './store';
+import globalStyles from './globalStyles';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -16,7 +18,12 @@ export default function App() {
 
   return (
       <StoreProvider store={store}>
-          <Navigation />
+          <KeyboardAvoidingView
+              style={globalStyles.flex1}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+              <Navigation />
+          </KeyboardAvoidingView>
       </StoreProvider>
   );
 }

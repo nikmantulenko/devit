@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -8,9 +8,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import apiRegister from '../api/register'
 import apiPhoneCheck from '../api/phoneCheck'
 import apiRequestPhoneCheck from '../api/requestPhoneCheck'
-import { FieldInput, PasswordInput } from '../components';
+import { FieldInput, PasswordInput, Button } from '../components';
 import validationRules from '../validationRules';
 import { actions, selectors } from '../store';
+import globalStyles from '../globalStyles';
+// @ts-ignore
+import LogoPNG from '../assets/logo.png';
 
 type FormValues = {
     name: string,
@@ -32,7 +35,6 @@ export default function Register(props: NativeStackScreenProps<any>) {
     const [status, setStatus] = useState('INITIAL')
 
     const error = requestCheckError || checkError || registrationError
-    const loading = isRequestingCheck || isChecking || isSigningIn
     const dummyPhone = '+3801111111111'
 
     const handleRequestPhoneCheck = async () => {
@@ -76,12 +78,10 @@ export default function Register(props: NativeStackScreenProps<any>) {
     }
 
     return (
-        <>
+        <View style={styles.container}>
             <StatusBar style="auto" />
 
-            <View style={styles.container}>
-                <Text>REGISTER SCREEN</Text>
-
+            <ScrollView contentContainerStyle={globalStyles.flexGrow1}>
                 <Form<FormValues>
                     initialValues={{
                         name: '',
@@ -92,39 +92,49 @@ export default function Register(props: NativeStackScreenProps<any>) {
                     }}
                     onSubmit={handleRegister}
                     render={formProps => (
-                        <View>
+                        <View style={styles.formWrapper}>
+                            <Image source={LogoPNG} style={[styles.logo, globalStyles.mt5]} />
+                            <Text style={[globalStyles.title, globalStyles.mb5]}>Sign Up To Workroom</Text>
+
                             {!!error && <Text style={styles.errorMessage}>{error}</Text>}
-                            {loading && <ActivityIndicator color={'darkblue'} />}
                             <Field
                                 name={'phone'}
                                 validate={validationRules.phone}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
+                                        containerStyle={globalStyles.mb2}
                                         editable={false}
                                         textContentType={'telephoneNumber'}
                                         placeholder={'380 00 000 000 00'}
                                     />
                                 )}
                             />
-                            <Button
-                                color={'tomato'}
-                                title={'request check'}
-                                onPress={handleRequestPhoneCheck}
-                                disabled={status !== 'INITIAL'}
-                            />
-                            <Button
-                                color={'tomato'}
-                                title={'verify'}
-                                onPress={handlePhoneCheck}
-                                disabled={status !== 'REQUESTED'}
-                            />
+                            {status === 'INITIAL' && (
+                                <Button
+                                    title={'request check'}
+                                    style={globalStyles.mb2}
+                                    onPress={handleRequestPhoneCheck}
+                                    disabled={status !== 'INITIAL'}
+                                    loading={isRequestingCheck}
+                                />
+                            )}
+                            {status === 'REQUESTED' && (
+                                <Button
+                                    title={'verify'}
+                                    style={globalStyles.mb2}
+                                    onPress={handlePhoneCheck}
+                                    disabled={status !== 'REQUESTED'}
+                                    loading={isChecking}
+                                />
+                            )}
                             <Field
                                 name={'name'}
                                 validate={validationRules.username}
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
+                                        containerStyle={globalStyles.mb4}
                                         textContentType={'username'}
                                         placeholder={'name'}
                                     />
@@ -136,6 +146,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
                                 render={fieldProps => (
                                     <FieldInput
                                         {...fieldProps}
+                                        containerStyle={globalStyles.mb4}
                                         textContentType={'emailAddress'}
                                         placeholder={'email'}
                                     />
@@ -147,6 +158,7 @@ export default function Register(props: NativeStackScreenProps<any>) {
                                 render={fieldProps => (
                                     <PasswordInput
                                         {...fieldProps}
+                                        containerStyle={globalStyles.mb4}
                                         placeholder={'password'}
                                     />
                                 )}
@@ -162,20 +174,24 @@ export default function Register(props: NativeStackScreenProps<any>) {
                                 )}
                             />
                             <Button
-                                color={'tomato'}
-                                title={'register'}
+                                title={'Next'}
+                                style={[globalStyles.mt5, globalStyles.mb4]}
                                 onPress={formProps.handleSubmit}
                                 disabled={
                                     status !== 'CONFIRMED' ||
                                     formProps.submitFailed && formProps.invalid
                                 }
+                                loading={isSigningIn}
                             />
-                            <Button title={'to login'} onPress={() => props.navigation.navigate('log-in')} />
+                            <Text style={[globalStyles.text, globalStyles.textCenter, globalStyles.mb4]}>
+                                Have Account?{' '}
+                                <Text style={globalStyles.accentText} onPress={() => props.navigation.replace('log-in')}>Log In</Text>
+                            </Text>
                         </View>
                     )}
                 />
-            </View>
-        </>
+            </ScrollView>
+        </View>
     );
 }
 
@@ -183,8 +199,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+    },
+    formWrapper: {
+        paddingHorizontal: 32,
+    },
+    logo: {
+        width: 68,
+        height: 90,
+        alignSelf: 'center',
     },
     errorMessage: {
         color: 'darkred',
