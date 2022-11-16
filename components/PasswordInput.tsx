@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 // @ts-ignore
-import PasswordUnsecurePNG from '../assets/favicon.png';
+import PasswordUnsecurePNG from '../assets/password-unsecure.png';
 // @ts-ignore
-import PasswordSecurePNG from '../assets/icon.png';
+import PasswordSecurePNG from '../assets/password-secure.png';
 
 import FieldInput from './FieldInput'
 
