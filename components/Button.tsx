@@ -1,8 +1,9 @@
-import { StyleSheet, TouchableOpacity, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, ActivityIndicator, StyleProp, ViewStyle } from 'react-native';
 
 interface ButtonProps {
     onPress: () => void
     title: string
+    style?: StyleProp<ViewStyle>
     disabled?: boolean
     loading?: boolean
 }
@@ -13,14 +14,14 @@ function Button(props: ButtonProps) {
             onPress={props.onPress}
             disabled={props.disabled || props.loading}
         >
-            <View style={[styles.container, (props.disabled || props.loading) && styles.disabledContainer]}>
+            <View style={[styles.container, props.style, (props.disabled || props.loading) && styles.disabledContainer]}>
                 <Text style={styles.text}>{props.title}</Text>
+                {props.loading && (
+                    <View style={styles.loader}>
+                        <ActivityIndicator color={'darkblue'} />
+                    </View>
+                )}
             </View>
-            {props.loading && (
-                <View style={styles.loader}>
-                    <ActivityIndicator color={'darkblue'} />
-                </View>
-            )}
         </TouchableOpacity>
     )
 }
